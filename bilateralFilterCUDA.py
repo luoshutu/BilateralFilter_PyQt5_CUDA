@@ -42,8 +42,8 @@ class bilateralFilter(object):
                 centralValue = self.__imageData[i, j]
                 for m in range(filModelX):
                     for n in range(filModelY):
-                        y_index = i + m - 7
-                        x_index = j + n - 7
+                        y_index = i + m - 6
+                        x_index = j + n - 6
                         if (y_index >= 0) and (y_index < self.__imageData.shape[0]) and \
                         (x_index >= 0) and (x_index < self.__imageData.shape[1]):
                             currentValue = self.__imageData[y_index, x_index]
