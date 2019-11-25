@@ -4,7 +4,7 @@
 #Creat QT Process Funcation.
 
 import windowLayout as winLay
-import bilateralFilterCUDA
+import bilateralFilter
 
 from PyQt5 import QtCore, QtWidgets, QtGui
 from PyQt5.QtCore import Qt
@@ -45,13 +45,12 @@ class MainWindow(QtWidgets.QMainWindow):
             return
 
         self.srcImage = QtGui.QImage(self.imagePath).convertToFormat(QtGui.QImage.Format_Grayscale8)
-
+        self.srcImage = self.srcImage.scaled(256, 256, QtCore.Qt.KeepAspectRatio)
         imageMap = QtGui.QPixmap(self.srcImage).scaled(
             self.ui.labelSrcImage.width(), 
             self.ui.labelSrcImage.height(), 
             QtCore.Qt.KeepAspectRatio, 
             QtCore.Qt.SmoothTransformation)
-
         #print(ImageMap.width())
         self.ui.labelSrcImage.setPixmap(imageMap)
         #self.ui.labelSrcImage.setScaledContents(True)
@@ -61,15 +60,17 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.textBrowser.append('未输入图像！')
             return
 
-        bilFilter = bilateralFilterCUDA.bilateralFilter()
+        bilFilter = bilateralFilter.bilateralFilter()
         bilFilter.getImageAndFilterParameter(self.srcImage, 15, 15, 4, 8)
 
-        self.resultImage = bilFilter.getFilteredImage()
+        self.resultImage, cpuFilterTime = bilFilter.getFilteredImage()
+        cpuFilterTime = str(cpuFilterTime)
+        self.ui.textBrowser.append(" CPU Filter Time:" + cpuFilterTime)
+
         imageMap = QtGui.QPixmap(self.resultImage).scaled(
             self.ui.labelResultImage.width(), 
             self.ui.labelResultImage.height(), 
             QtCore.Qt.KeepAspectRatio)
-
         self.ui.labelResultImage.setPixmap(imageMap)
 
     def resizeEvent(self, e):
@@ -77,14 +78,12 @@ class MainWindow(QtWidgets.QMainWindow):
             self.ui.labelSrcImage.width(), 
             self.ui.labelSrcImage.height(), 
             QtCore.Qt.KeepAspectRatio)
-
         self.ui.labelSrcImage.setPixmap(imageMap)
 
         imageMap = QtGui.QPixmap(self.resultImage).scaled(
             self.ui.labelResultImage.width(), 
             self.ui.labelResultImage.height(), 
             QtCore.Qt.KeepAspectRatio)
-
         self.ui.labelResultImage.setPixmap(imageMap)
 
 
