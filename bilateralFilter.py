@@ -43,7 +43,6 @@ class bilateralFilter(object):
     def __filter(self, filModelX, filModelY, s_sigma, r_sigma):
         bilFilKernel = bilateralFilter_cu.bilFilKernel()
         GaussModel = bilFilKernel.creatGaussModel_gpu(filModelX, filModelY, s_sigma)
-        print(GaussModel)
 
         for i in range(self.__imageData.shape[0]):
             for j in range(self.__imageData.shape[1]):
