@@ -35,7 +35,7 @@ __global__ void bilateral_filter_kernel(unsigned int *d_dst, unsigned int *d_src
     int height = imgHeight[0];
     float delta = r_sigma[0];
     int radius = filModelLen[0] / 2;
-
+    
     if (x >= width || y >= height)
     {
         return;
@@ -62,13 +62,15 @@ __global__ void bilateral_filter_kernel(unsigned int *d_dst, unsigned int *d_src
             float current_value = d_src[x_index * height + y_index];
 
             //factor = sGaussian[m + radius] * sGaussian[n + radius];
-            factor = sGaussian[(m + radius) * filModelLen[0] + n + radius] * RangeGaussian(center_value, current_value, delta);
+            factor = sGaussian[(m + radius) * filModelLen[0] + n + radius] * 
+            RangeGaussian(center_value, current_value, delta);
+            
             t   += factor * current_value;
             sum += factor;
         }
     }
 
-    d_dst[y + x * height] = 128;//floor(t / sum);
+    d_dst[x * height + y] = floor(t / sum);
 }
 ''')
 

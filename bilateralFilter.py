@@ -37,7 +37,7 @@ class bilateralFilter(object):
         print('FilterTime:', self.cpuFilterTime)
 
     def getFilteredImage(self):
-        print(self.__imageFiltered)
+        #print(self.__imageFiltered)
         outputImage = QtGui.QImage(self.__imageFiltered, self.__imageFiltered.shape[1], 
             self.__imageFiltered.shape[0], QtGui.QImage.Format_Grayscale8) 
         return outputImage, self.cpuFilterTime
@@ -91,14 +91,18 @@ class bilateralFilter(object):
         filModelLen = np.array([filModelX]).astype(np.uint8)
         BFCU.creatGaussModel(drv.Out(self.__GaussModel), drv.In(s_sigma), drv.In(filModelLen), 
                              block = (filModelX, filModelY, 1), grid = (1, 1))
-        print(self.__GaussModel)
+        #print(self.__GaussModel)
         r_sigma = np.array([r_sigma]).astype(np.float32)
-        imgWidth = np.array([self.__imageData.shape[1]]).astype(np.uint8)
-        imgHeight = np.array([self.__imageData.shape[0]]).astype(np.uint8)
+        #print(r_sigma)
+        imgWidth = np.array([self.__imageData.shape[1]]).astype(np.uint16)
+        imgHeight = np.array([self.__imageData.shape[0]]).astype(np.uint16)
+        #print('width',imgWidth,self.__imageData.shape[1])
+        #print('height',imgHeight,self.__imageData.shape[0])
         blockSizeDim1 = int(32)
         blockSizeDim2 = int(32)
-        gridSizeDim1 = int(1)#self.__imageData.shape[0] / blockSizeDim1)
-        gridSizeDim2 = int(1)#self.__imageData.shape[1] / blockSizeDim2)
+        gridSizeDim1 = int(self.__imageData.shape[0] / blockSizeDim1)
+        gridSizeDim2 = int(self.__imageData.shape[1] / blockSizeDim2)
         BFCU.bilateral_filter_kernel(drv.Out(self.__imageFiltered), drv.In(self.__imageData), drv.In(self.__GaussModel),
                              drv.In(imgWidth), drv.In(imgHeight), drv.In(r_sigma), drv.In(filModelLen), 
                              block = (blockSizeDim1, blockSizeDim2, 1), grid = (gridSizeDim1, gridSizeDim2))
+        print(self.__imageFiltered)
