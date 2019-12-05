@@ -109,4 +109,4 @@ class bilateralFilter(object):
                              drv.In(imgWidth), drv.In(imgHeight), drv.In(r_sigma), drv.In(filModelLen), 
                              block = (blockSizeDim1, blockSizeDim2, 1), grid = (gridSizeDim1, gridSizeDim2))
         self.__imageFiltered = self.__imageFiltered.astype(np.uint8)
-        print(self.__imageFiltered)
+        #print(self.__imageFiltered)

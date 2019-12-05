@@ -62,15 +62,15 @@ __global__ void bilateral_filter_kernel(float *d_dst, float *d_src, float *sGaus
             float current_value = d_src[x_index * height + y_index];
 
             //factor = sGaussian[m + radius] * sGaussian[n + radius];
-            /*factor = sGaussian[(m + radius) * filModelLen[0] + n + radius] * 
-            RangeGaussian(center_value, current_value, delta);*/
-            factor = sGaussian[m + radius] * sGaussian[n + radius] * RangeGaussian(center_value, current_value, delta);
+            factor = sGaussian[(m + radius) * filModelLen[0] + n + radius] * 
+            RangeGaussian(center_value, current_value, delta);
+            //factor = sGaussian[m + radius] * sGaussian[n + radius] * RangeGaussian(center_value, current_value, delta);
             t   += factor * current_value;
             sum += factor;
         }
     }
 
-    d_dst[x * 256 + y] = floor(t / sum);
+    d_dst[x * height + y] = floor(t / sum);
 }
 ''')
 
