@@ -94,15 +94,19 @@ class bilateralFilter(object):
         #print(self.__GaussModel)
         r_sigma = np.array([r_sigma]).astype(np.float32)
         #print(r_sigma)
-        imgWidth = np.array([self.__imageData.shape[1]]).astype(np.uint16)
+        imgWidth  = np.array([self.__imageData.shape[1]]).astype(np.uint16)
         imgHeight = np.array([self.__imageData.shape[0]]).astype(np.uint16)
         #print('width',imgWidth,self.__imageData.shape[1])
         #print('height',imgHeight,self.__imageData.shape[0])
         blockSizeDim1 = int(32)
         blockSizeDim2 = int(32)
-        gridSizeDim1 = int(self.__imageData.shape[0] / blockSizeDim1)
-        gridSizeDim2 = int(self.__imageData.shape[1] / blockSizeDim2)
+        gridSizeDim1  = int(imgWidth[0]  / blockSizeDim1)
+        gridSizeDim2  = int(imgHeight[0]  / blockSizeDim2)
+
+        self.__imageFiltered = self.__imageFiltered.astype(np.float32)
+        self.__imageData = self.__imageData.astype(np.float32)
         BFCU.bilateral_filter_kernel(drv.Out(self.__imageFiltered), drv.In(self.__imageData), drv.In(self.__GaussModel),
                              drv.In(imgWidth), drv.In(imgHeight), drv.In(r_sigma), drv.In(filModelLen), 
                              block = (blockSizeDim1, blockSizeDim2, 1), grid = (gridSizeDim1, gridSizeDim2))
+        self.__imageFiltered = self.__imageFiltered.astype(np.uint8)
         print(self.__imageFiltered)

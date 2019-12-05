@@ -26,10 +26,10 @@ __device__ float RangeGaussian(int center_value, int current_value, float delta)
     return expf(-xx / (2.f * delta * delta));
 }
 
-__global__ void bilateral_filter_kernel(unsigned int *d_dst, unsigned int *d_src, float *sGaussian, int *imgWidth, int *imgHeight, float *r_sigma, int *filModelLen)
+__global__ void bilateral_filter_kernel(float *d_dst, float *d_src, float *sGaussian, int *imgWidth, int *imgHeight, float *r_sigma, int *filModelLen)
 {
-    int x = blockIdx.x * blockDim.x + threadIdx.x;
-    int y = blockIdx.y * blockDim.y + threadIdx.y;
+    unsigned int x = blockIdx.x * blockDim.x + threadIdx.x;
+    unsigned int y = blockIdx.y * blockDim.y + threadIdx.y;
 
     int width = imgWidth[0];
     int height = imgHeight[0];
@@ -62,15 +62,15 @@ __global__ void bilateral_filter_kernel(unsigned int *d_dst, unsigned int *d_src
             float current_value = d_src[x_index * height + y_index];
 
             //factor = sGaussian[m + radius] * sGaussian[n + radius];
-            factor = sGaussian[(m + radius) * filModelLen[0] + n + radius] * 
-            RangeGaussian(center_value, current_value, delta);
-            
+            /*factor = sGaussian[(m + radius) * filModelLen[0] + n + radius] * 
+            RangeGaussian(center_value, current_value, delta);*/
+            factor = sGaussian[m + radius] * sGaussian[n + radius] * RangeGaussian(center_value, current_value, delta);
             t   += factor * current_value;
             sum += factor;
         }
     }
 
-    d_dst[x * height + y] = floor(t / sum);
+    d_dst[x * 256 + y] = floor(t / sum);
 }
 ''')
 
