@@ -45,7 +45,7 @@ class MainWindow(QtWidgets.QMainWindow):
             return
 
         self.srcImage = QtGui.QImage(self.imagePath).convertToFormat(QtGui.QImage.Format_Grayscale8)
-        self.srcImage = self.srcImage.scaled(256, 256, QtCore.Qt.KeepAspectRatio)
+        self.srcImage = self.srcImage.scaled(512, 512, QtCore.Qt.KeepAspectRatio)
         imageMap = QtGui.QPixmap(self.srcImage).scaled(
             self.ui.labelSrcImage.width(), 
             self.ui.labelSrcImage.height(), 
