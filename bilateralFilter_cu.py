@@ -6,6 +6,7 @@
 from pycuda.compiler import SourceModule
 
 mod = SourceModule('''
+//计算高斯核
 __global__ void creatGaussModel(float *tGaussian, float *s_sigma, int *filModelLen)
 {
     int x = blockIdx.x * blockDim.x + threadIdx.x;
@@ -13,7 +14,7 @@ __global__ void creatGaussModel(float *tGaussian, float *s_sigma, int *filModelL
 
     float delta = s_sigma[0];
     int radius = filModelLen[0] / 2;
-    tGaussian[x * 15 + y] = expf(-( (x - (radius)) * (x - (radius)) + 
+    tGaussian[x * filModelLen[0] + y] = expf(-( (x - (radius)) * (x - (radius)) + 
                                      (y - (radius)) * (y - (radius)) ) / (2.0 * delta * delta));
 }
 
